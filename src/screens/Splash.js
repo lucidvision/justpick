@@ -7,11 +7,17 @@ class Splash extends Component {
   state = {}
   render() {
     return (
-      <View>
+      <View style={styles.container}>
         <Text>Splash</Text>
       </View>
     )
   }
+}
+
+const styles = {
+  container: {
+    marginTop: 10,
+  },
 }
 
 export default Splash
