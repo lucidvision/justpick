@@ -8,7 +8,7 @@ class Loading extends Component {
   }
   state = {}
   componentDidMount() {
-    this.props.navigation.navigate('Restaurants')
+    this.props.navigation.navigate('Home')
   }
   render() {
     return (

@@ -31,10 +31,10 @@ export default class Card extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-around',
+    backgroundColor: 'white',
   },
   image: {
-    height: 500,
+    height: 400,
     width: '100%',
     resizeMode: 'contain',
   },

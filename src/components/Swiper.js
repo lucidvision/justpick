@@ -144,7 +144,6 @@ class Swiper extends Component {
 const styles = {
   container: {
     flex: 1,
-    backgroundColor: 'red',
     shadowColor: 'rgba(137, 137, 137, 0.5)',
     shadowOpacity: 0.8,
     shadowRadius: 6,
@@ -154,7 +153,6 @@ const styles = {
     elevation: 4,
   },
   card: {
-    backgroundColor: 'green',
     width: '100%',
     height: '100%',
     position: 'absolute',
