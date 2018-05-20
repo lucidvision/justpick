@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native'
+import { ContentText, Heading } from 'components'
 import { fetchPhoto } from 'api/google'
+import { MARGIN, PADDING } from 'styles'
 
 export default class Card extends Component {
   static propTypes = {
@@ -21,8 +23,26 @@ export default class Card extends Component {
     const { restaurant } = this.props
     return (
       <View style={styles.container}>
+        {/* {this.state.image ? (
+          <Image style={styles.image} source={{ uri: this.state.image }} />
+        ) : (
+          <ActivityIndicator />
+        )} */}
         <Image style={styles.image} source={require('../images/test.png')} />
-        <Text>{restaurant.name}</Text>
+        <View style={styles.info}>
+          <Heading
+            style={[styles.name, styles.margin]}
+            text={restaurant.name}
+          />
+          <ContentText
+            style={styles.margin}
+            text={`Rating: ${restaurant.rating}`}
+          />
+          <ContentText
+            style={styles.margin}
+            text={restaurant.opening_hours.open_now ? 'Open Now' : 'Closed'}
+          />
+        </View>
       </View>
     )
   }
@@ -31,9 +51,20 @@ export default class Card extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    borderRadius: 10,
     backgroundColor: 'white',
   },
+  info: {
+    padding: PADDING.MD,
+  },
+  name: {
+    textAlign: 'center',
+  },
+  margin: {
+    marginBottom: MARGIN.MD,
+  },
   image: {
+    borderRadius: 10,
     height: 400,
     width: '100%',
     resizeMode: 'contain',

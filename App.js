@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { View, StatusBar } from 'react-native'
 import {
   createSwitchNavigator,
   createStackNavigator,
@@ -6,20 +7,25 @@ import {
 } from 'react-navigation'
 import { Loading, Restaurants, Splash } from 'screens'
 
-const HomeNavigation = createBottomTabNavigator({
+const HomeTabs = createBottomTabNavigator({
   Restaurants: {
     screen: Restaurants,
   },
 })
 
-const MainNavigaton = createStackNavigator({
-  Home: HomeNavigation,
+const MainStack = createStackNavigator({
+  Home: {
+    screen: HomeTabs,
+    navigationOptions: {
+      headerTitle: 'Just Pick',
+    },
+  },
 })
 
 const RootNavigation = createSwitchNavigator(
   {
     Loading,
-    Home: MainNavigaton,
+    Home: MainStack,
     Splash,
   },
   {
@@ -29,6 +35,11 @@ const RootNavigation = createSwitchNavigator(
 
 export default class App extends Component {
   render() {
-    return <RootNavigation />
+    return (
+      <View style={{ flex: 1 }}>
+        <StatusBar translucent />
+        <RootNavigation />
+      </View>
+    )
   }
 }
