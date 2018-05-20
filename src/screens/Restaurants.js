@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { View } from 'react-native'
+import { connect } from 'react-redux'
 import { Location, Permissions } from 'expo'
 import { Card, Swiper } from 'components'
+import { addRestaurant } from 'redux/restaurants'
 import { fetchRestaurants } from 'api/google'
 
 class Restaurants extends Component {
-  static propTypes = {}
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+  }
   state = {
     restaurants: [],
     status: null,
@@ -47,7 +51,9 @@ class Restaurants extends Component {
       })
     })
   }
-  handleSwipeRight = () => {}
+  handleSwipeRight = restaurant => {
+    this.props.dispatch(addRestaurant(restaurant))
+  }
   renderCard = restaurant => {
     return <Card restaurant={restaurant} />
   }
@@ -71,4 +77,4 @@ const styles = {
   },
 }
 
-export default Restaurants
+export default connect()(Restaurants)

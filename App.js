@@ -5,7 +5,11 @@ import {
   createStackNavigator,
   createBottomTabNavigator,
 } from 'react-navigation'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import devTools from 'remote-redux-devtools'
 import { Loading, Restaurants, Splash } from 'screens'
+import restaurants from 'redux/restaurants'
 
 const HomeTabs = createBottomTabNavigator({
   Restaurants: {
@@ -33,13 +37,17 @@ const RootNavigation = createSwitchNavigator(
   }
 )
 
+const store = createStore(restaurants, devTools())
+
 export default class App extends Component {
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <StatusBar translucent />
-        <RootNavigation />
-      </View>
+      <Provider store={store}>
+        <View style={{ flex: 1 }}>
+          <StatusBar translucent />
+          <RootNavigation />
+        </View>
+      </Provider>
     )
   }
 }
