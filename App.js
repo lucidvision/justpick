@@ -8,12 +8,15 @@ import {
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import devTools from 'remote-redux-devtools'
-import { Loading, Restaurants, Splash } from 'screens'
+import { Account, Loading, Restaurants, Splash } from 'screens'
 import restaurants from 'redux/restaurants'
 
 const HomeTabs = createBottomTabNavigator({
   Restaurants: {
     screen: Restaurants,
+  },
+  Account: {
+    screen: Account,
   },
 })
 

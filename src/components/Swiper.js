@@ -5,8 +5,6 @@ import {
   Animated,
   PanResponder,
   Dimensions,
-  LayoutAnimation,
-  UIManager,
   Platform,
 } from 'react-native'
 
@@ -19,6 +17,7 @@ class Swiper extends Component {
     data: PropTypes.array.isRequired,
     onSwipeLeft: PropTypes.func,
     onSwipeRight: PropTypes.func,
+    onPickingComplete: PropTypes.func,
     renderCard: PropTypes.func,
   }
 
@@ -66,12 +65,6 @@ class Swiper extends Component {
     return null
   }
 
-  componentDidUpdate() {
-    UIManager.setLayoutAnimationEnabledExperimental &&
-      UIManager.setLayoutAnimationEnabledExperimental(true)
-    LayoutAnimation.spring()
-  }
-
   forceSwipe(direction) {
     const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH
     Animated.timing(this.state.position, {
@@ -81,12 +74,17 @@ class Swiper extends Component {
   }
 
   onSwipeComplete(direction) {
-    const { onSwipeLeft, onSwipeRight, data } = this.props
+    const { onSwipeLeft, onSwipeRight, onPickingComplete, data } = this.props
     const item = data[this.state.index]
 
     direction === 'right' ? onSwipeRight(item) : onSwipeLeft(item)
     this.state.position.setValue({ x: 0, y: 0 })
-    this.setState({ index: this.state.index + 1 })
+
+    if (this.state.index + 1 >= this.props.data.length) {
+      onPickingComplete()
+    } else {
+      this.setState(prevState => ({ index: prevState.index + 1 }))
+    }
   }
 
   resetPosition() {
@@ -95,7 +93,7 @@ class Swiper extends Component {
     }).start()
   }
 
-  getCardStyle() {
+  getRotateStyle() {
     const { position } = this.state
     const rotate = position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
@@ -105,6 +103,18 @@ class Swiper extends Component {
     return {
       ...position.getLayout(),
       transform: [{ rotate }],
+    }
+  }
+
+  getScaleStyle() {
+    const { position } = this.state
+    const scale = position.x.interpolate({
+      inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
+      outputRange: [1, 0.9, 1],
+    })
+
+    return {
+      transform: [{ scale }],
     }
   }
 
@@ -118,7 +128,19 @@ class Swiper extends Component {
         return (
           <Animated.View
             key={index}
-            style={[this.getCardStyle(), styles.card, { zIndex: 99 }]}
+            style={[this.getRotateStyle(), styles.card, { zIndex: 99 }]}
+            {...this.state.panResponder.panHandlers}
+          >
+            {this.props.renderCard(item)}
+          </Animated.View>
+        )
+      }
+
+      if (index === this.state.index + 1) {
+        return (
+          <Animated.View
+            key={index}
+            style={[this.getScaleStyle(), styles.card, { zIndex: 99 }]}
             {...this.state.panResponder.panHandlers}
           >
             {this.props.renderCard(item)}
@@ -127,7 +149,10 @@ class Swiper extends Component {
       }
 
       return (
-        <Animated.View key={index} style={[styles.card, { zIndex: -index }]}>
+        <Animated.View
+          key={index}
+          style={[styles.card, { transform: [{ scale: 0.9 }], zIndex: -index }]}
+        >
           {this.props.renderCard(item)}
         </Animated.View>
       )

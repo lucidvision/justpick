@@ -4,22 +4,27 @@ import { View } from 'react-native'
 import { connect } from 'react-redux'
 import { Location, Permissions } from 'expo'
 import { Card, Swiper } from 'components'
-import { addRestaurant } from 'redux/restaurants'
+import {
+  setRestaurants,
+  addShortlist,
+  transferRestaurants,
+} from 'redux/restaurants'
 import { fetchRestaurants } from 'api/google'
 
 class Restaurants extends Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
+    restaurants: PropTypes.array.isRequired,
   }
   state = {
-    restaurants: [],
     status: null,
   }
   componentDidMount() {
     Permissions.getAsync(Permissions.LOCATION)
       .then(({ status }) => {
         if (status === 'granted') {
-          return this.setRestaurants()
+          this.fetchAndSetRestaurants()
+          return
         }
 
         this.setState(() => ({ status }))
@@ -27,7 +32,6 @@ class Restaurants extends Component {
       })
       .catch(error => {
         console.warn('Error getting Location permission: ', error)
-
         this.setState(() => ({ status: 'undetermined' }))
       })
   }
@@ -35,24 +39,31 @@ class Restaurants extends Component {
     Permissions.askAsync(Permissions.LOCATION)
       .then(({ status }) => {
         if (status === 'granted') {
-          return this.setRestaurants()
+          return this.fetchAndSetRestaurants()
         }
 
         this.setState(() => ({ status }))
       })
-      .catch(error => console.warn('error asking Location permission: ', error))
+      .catch(error => {
+        console.warn('error asking Location permission: ', error)
+        this.setState(() => ({ status: 'undetermined' }))
+      })
   }
-  setRestaurants = () => {
+  fetchAndSetRestaurants = () => {
     Location.getCurrentPositionAsync().then(({ coords }) => {
       fetchRestaurants(coords).then(res => {
         const restaurants = res.data.results
-        this.setState({ restaurants })
+        this.props.dispatch(setRestaurants(restaurants))
         console.log(restaurants)
       })
     })
   }
+  handleSwipeLeft = restaurant => {}
   handleSwipeRight = restaurant => {
-    this.props.dispatch(addRestaurant(restaurant))
+    this.props.dispatch(addShortlist(restaurant))
+  }
+  handlePickingComplete = () => {
+    this.props.dispatch(transferRestaurants())
   }
   renderCard = restaurant => {
     return <Card restaurant={restaurant} />
@@ -61,8 +72,10 @@ class Restaurants extends Component {
     return (
       <View style={styles.container}>
         <Swiper
-          data={this.state.restaurants}
+          data={this.props.restaurants}
+          onSwipeLeft={this.handleSwipeLeft}
           onSwipeRight={this.handleSwipeRight}
+          onPickingComplete={this.handlePickingComplete}
           renderCard={this.renderCard}
         />
       </View>
@@ -77,4 +90,10 @@ const styles = {
   },
 }
 
-export default connect()(Restaurants)
+const mapStateToProps = state => {
+  return {
+    restaurants: state.restaurants,
+  }
+}
+
+export default connect(mapStateToProps)(Restaurants)
