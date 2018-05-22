@@ -3,10 +3,12 @@ import PropTypes from 'prop-types'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
 import { Location, Permissions } from 'expo'
-import { AppModal, Card, Heading, Swiper } from 'components'
+import { Card, Swiper } from 'components'
 import {
-  setRestaurants,
+  addPicklist,
   addShortlist,
+  setPick,
+  setRestaurants,
   transferRestaurants,
 } from 'redux/restaurants'
 import { fetchRestaurants } from 'api/google'
@@ -85,6 +87,10 @@ class Restaurants extends Component {
   handlePickingComplete = () => {
     this.props.dispatch(transferRestaurants())
     if (this.props.restaurants.length === 1) {
+      const restaurant = this.props.restaurants[0]
+      this.fetchAndSetRestaurants()
+      this.props.dispatch(setPick(restaurant))
+      this.props.dispatch(addPicklist(restaurant))
       this.props.navigation.navigate('Pick')
     }
   }

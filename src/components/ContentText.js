@@ -4,12 +4,12 @@ import { StyleSheet, Text } from 'react-native'
 import { FONT_SIZE, COLOR } from 'styles'
 
 ContentText.propTypes = {
-  style: PropTypes.oneOfType([PropTypes.array, PropTypes.number]),
+  style: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.object,
+    PropTypes.number,
+  ]),
   text: PropTypes.string,
-}
-
-ContentText.defaultProps = {
-  style: [],
 }
 
 export default function ContentText(props) {
