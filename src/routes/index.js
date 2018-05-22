@@ -3,11 +3,14 @@ import {
   createStackNavigator,
   createBottomTabNavigator,
 } from 'react-navigation'
-import { Account, Loading, Pick, Restaurants, Splash } from 'screens'
+import { Account, Loading, Pick, PickList, Restaurants, Splash } from 'screens'
 
 const HomeTabs = createBottomTabNavigator({
   Restaurants: {
     screen: Restaurants,
+  },
+  Picks: {
+    screen: PickList,
   },
   Account: {
     screen: Account,
