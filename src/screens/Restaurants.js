@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
 import { Location, Permissions } from 'expo'
-import { Card, Swiper } from 'components'
+import { AppModal, Card, Heading, Swiper } from 'components'
 import {
   setRestaurants,
   addShortlist,
@@ -11,12 +11,32 @@ import {
 } from 'redux/restaurants'
 import { fetchRestaurants } from 'api/google'
 
+const dummyRestaurants = [
+  {
+    name: 'Rest 1',
+    rating: 4.1,
+    opening_hours: '',
+  },
+  {
+    name: 'Rest 2',
+    rating: 4.2,
+    opening_hours: '',
+  },
+  {
+    name: 'Rest 3',
+    rating: 4.3,
+    opening_hours: '',
+  },
+]
+
 class Restaurants extends Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
+    navigation: PropTypes.object.isRequired,
     restaurants: PropTypes.array.isRequired,
   }
   state = {
+    showModal: false,
     status: null,
   }
   componentDidMount() {
@@ -53,7 +73,7 @@ class Restaurants extends Component {
     Location.getCurrentPositionAsync().then(({ coords }) => {
       fetchRestaurants(coords).then(res => {
         const restaurants = res.data.results
-        this.props.dispatch(setRestaurants(restaurants))
+        this.props.dispatch(setRestaurants(dummyRestaurants))
         console.log(restaurants)
       })
     })
@@ -64,6 +84,9 @@ class Restaurants extends Component {
   }
   handlePickingComplete = () => {
     this.props.dispatch(transferRestaurants())
+    if (this.props.restaurants.length === 1) {
+      this.props.navigation.navigate('Pick')
+    }
   }
   renderCard = restaurant => {
     return <Card restaurant={restaurant} />
