@@ -14,21 +14,21 @@ export default class Card extends Component {
   }
   componentDidMount() {
     const { photos } = this.props.restaurant
-    // fetchPhoto(photos[0].photo_reference).then(res => {
-    //   const image = res.request.responseURL
-    //   this.setState({ image })
-    // })
+    fetchPhoto(photos[0].photo_reference).then(res => {
+      const image = res.request.responseURL
+      this.setState({ image })
+    })
   }
   render() {
     const { restaurant } = this.props
     return (
       <View style={styles.container}>
-        {/* {this.state.image ? (
+        {this.state.image ? (
           <Image style={styles.image} source={{ uri: this.state.image }} />
         ) : (
           <ActivityIndicator />
-        )} */}
-        <Image style={styles.image} source={require('../images/test.png')} />
+        )}
+        {/* <Image style={styles.image} source={require('../images/test.png')} /> */}
         <View style={styles.info}>
           <Heading
             style={[styles.name, styles.margin]}

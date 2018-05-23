@@ -1,4 +1,5 @@
 export { default as AppModal } from './AppModal'
+export { default as Button } from './Button'
 export { default as Card } from './Card'
 export { default as ContentText } from './ContentText'
 export { default as Heading } from './Heading'

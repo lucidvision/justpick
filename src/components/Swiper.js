@@ -74,13 +74,14 @@ class Swiper extends Component {
   }
 
   onSwipeComplete(direction) {
+    const { index, position } = this.state
     const { onSwipeLeft, onSwipeRight, onPickingComplete, data } = this.props
-    const item = data[this.state.index]
+    const item = data[index]
 
-    direction === 'right' ? onSwipeRight(item) : onSwipeLeft(item)
-    this.state.position.setValue({ x: 0, y: 0 })
+    direction === 'right' ? onSwipeRight(item) : onSwipeLeft(index)
+    position.setValue({ x: 0, y: 0 })
 
-    if (this.state.index + 1 >= this.props.data.length) {
+    if (index + 1 >= data.length) {
       onPickingComplete()
     } else {
       this.setState(prevState => ({ index: prevState.index + 1 }))

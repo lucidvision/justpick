@@ -4,7 +4,7 @@ import { Modal, StyleSheet, View } from 'react-native'
 import { COLOR } from 'styles'
 
 AppModal.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.array.isRequired,
   visible: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
 }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { FlatList, View } from 'react-native'
 import { connect } from 'react-redux'
 import { ListItem, ListSeparator } from 'components'
-import { setPick } from 'redux/restaurants'
+import { setPick } from 'reducer'
 
 class PickList extends Component {
   static propTypes = {
@@ -24,7 +24,7 @@ class PickList extends Component {
         <FlatList
           data={this.props.picklist}
           renderItem={this.renderItem}
-          keyExtractor={item => item.name}
+          keyExtractor={(item, index) => index.toString()}
           ItemSeparatorComponent={ListSeparator}
         />
       </View>

@@ -4,9 +4,9 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import devTools from 'remote-redux-devtools'
 import Routes from 'routes'
-import restaurants from 'redux/restaurants'
+import reducer from 'reducer'
 
-const store = createStore(restaurants, devTools())
+const store = createStore(reducer, devTools())
 
 export default class App extends Component {
   render() {

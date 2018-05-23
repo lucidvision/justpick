@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
 import { Location, Permissions } from 'expo'
-import { Card, Swiper } from 'components'
+import { AppModal, Button, Card, Heading, Swiper } from 'components'
 import {
   addPicklist,
   addShortlist,
   setPick,
   setRestaurants,
   transferRestaurants,
-} from 'redux/restaurants'
+} from 'reducer'
 import { fetchRestaurants } from 'api/google'
 
 const dummyRestaurants = [
@@ -36,6 +36,7 @@ class Restaurants extends Component {
     dispatch: PropTypes.func.isRequired,
     navigation: PropTypes.object.isRequired,
     restaurants: PropTypes.array.isRequired,
+    shortlist: PropTypes.array.isRequired,
   }
   state = {
     showModal: false,
@@ -72,16 +73,21 @@ class Restaurants extends Component {
       })
   }
   fetchAndSetRestaurants = () => {
-    this.props.dispatch(setRestaurants(dummyRestaurants))
+    // this.props.dispatch(setRestaurants(dummyRestaurants))
     Location.getCurrentPositionAsync().then(({ coords }) => {
       fetchRestaurants(coords).then(res => {
         const restaurants = res.data.results
-        // this.props.dispatch(setRestaurants(restaurants))
+        this.props.dispatch(setRestaurants(restaurants))
         console.log(restaurants)
       })
     })
   }
-  handleSwipeLeft = restaurant => {}
+  handleSwipeLeft = index => {
+    const { restaurants, shortlist } = this.props
+    if (restaurants.length - 1 === index && shortlist.length === 0) {
+      this.setState({ showModal: true })
+    }
+  }
   handleSwipeRight = restaurant => {
     this.props.dispatch(addShortlist(restaurant))
   }
@@ -94,6 +100,10 @@ class Restaurants extends Component {
       this.props.dispatch(addPicklist(restaurant))
       this.props.navigation.navigate('Pick')
     }
+  }
+  handlePressButton = () => {
+    this.fetchAndSetRestaurants()
+    this.setState({ showModal: false })
   }
   renderCard = restaurant => {
     return <Card restaurant={restaurant} />
@@ -108,6 +118,15 @@ class Restaurants extends Component {
           onPickingComplete={this.handlePickingComplete}
           renderCard={this.renderCard}
         />
+        <AppModal
+          visible={this.state.showModal}
+          onRequestClose={this.handlePressButton}
+        >
+          <Heading text="You ran out of options. Please try again." />
+          <View style={styles.buttonGroupRight}>
+            <Button label={'CONFIRM'} onPress={this.handlePressButton} />
+          </View>
+        </AppModal>
       </View>
     )
   }
@@ -123,6 +142,7 @@ const styles = {
 const mapStateToProps = state => {
   return {
     restaurants: state.restaurants,
+    shortlist: state.shortlist,
   }
 }
 
