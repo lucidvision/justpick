@@ -1,17 +1,47 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Text, View } from 'react-native'
+import { FlatList, View } from 'react-native'
+import { connect } from 'react-redux'
+import { ListItem, ListSeparator } from 'components'
+import { setPick } from 'redux/restaurants'
 
 class PickList extends Component {
-  static propTypes = {}
-  state = {}
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+    navigation: PropTypes.object.isRequired,
+    picklist: PropTypes.array.isRequired,
+  }
+  handlePressPick = restaurant => {
+    this.props.dispatch(setPick(restaurant))
+    this.props.navigation.navigate('Pick')
+  }
+  renderItem = ({ item }) => {
+    return <ListItem item={item} onItemPressed={this.handlePressPick} />
+  }
   render() {
     return (
-      <View>
-        <Text>PickList</Text>
+      <View style={styles.container}>
+        <FlatList
+          data={this.props.picklist}
+          renderItem={this.renderItem}
+          keyExtractor={item => item.name}
+          ItemSeparatorComponent={ListSeparator}
+        />
       </View>
     )
   }
 }
 
-export default PickList
+const styles = {
+  container: {
+    flex: 1,
+  },
+}
+
+const mapStateToProps = state => {
+  return {
+    picklist: state.picklist,
+  }
+}
+
+export default connect(mapStateToProps)(PickList)

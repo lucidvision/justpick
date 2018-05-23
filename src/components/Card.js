@@ -54,19 +54,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'white',
   },
+  image: {
+    borderRadius: 10,
+    height: '60%',
+    width: '100%',
+    resizeMode: 'contain',
+  },
   info: {
     padding: PADDING.MD,
-  },
-  name: {
-    textAlign: 'center',
   },
   margin: {
     marginBottom: MARGIN.MD,
   },
-  image: {
-    borderRadius: 10,
-    height: 400,
-    width: '100%',
-    resizeMode: 'contain',
+  name: {
+    textAlign: 'center',
   },
 })

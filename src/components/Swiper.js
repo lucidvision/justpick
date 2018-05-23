@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
-const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH
+const SWIPE_THRESHOLD = 0.3 * SCREEN_WIDTH
 const SWIPE_OUT_DURATION = 250
 
 class Swiper extends Component {
@@ -97,7 +97,7 @@ class Swiper extends Component {
     const { position } = this.state
     const rotate = position.x.interpolate({
       inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
-      outputRange: ['-120deg', '0deg', '120deg'],
+      outputRange: ['-90deg', '0deg', '90deg'],
     })
 
     return {
@@ -128,7 +128,7 @@ class Swiper extends Component {
         return (
           <Animated.View
             key={index}
-            style={[this.getRotateStyle(), styles.card, { zIndex: 99 }]}
+            style={[this.getRotateStyle(), styles.card, styles.topCard]}
             {...this.state.panResponder.panHandlers}
           >
             {this.props.renderCard(item)}
@@ -140,7 +140,7 @@ class Swiper extends Component {
         return (
           <Animated.View
             key={index}
-            style={[this.getScaleStyle(), styles.card, { zIndex: 99 }]}
+            style={[this.getScaleStyle(), styles.card, { zIndex: 98 }]}
             {...this.state.panResponder.panHandlers}
           >
             {this.props.renderCard(item)}
@@ -169,13 +169,16 @@ class Swiper extends Component {
 const styles = {
   container: {
     flex: 1,
-    shadowColor: 'rgba(137, 137, 137, 0.5)',
+    elevation: 4,
+  },
+  topCard: {
+    shadowColor: 'rgba(137, 137, 137, 0.8)',
     shadowOpacity: 0.8,
     shadowRadius: 6,
     shadowOffset: {
       height: 8,
     },
-    elevation: 4,
+    zIndex: 99,
   },
   card: {
     width: '100%',

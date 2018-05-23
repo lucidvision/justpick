@@ -72,10 +72,11 @@ class Restaurants extends Component {
       })
   }
   fetchAndSetRestaurants = () => {
+    this.props.dispatch(setRestaurants(dummyRestaurants))
     Location.getCurrentPositionAsync().then(({ coords }) => {
       fetchRestaurants(coords).then(res => {
         const restaurants = res.data.results
-        this.props.dispatch(setRestaurants(dummyRestaurants))
+        // this.props.dispatch(setRestaurants(restaurants))
         console.log(restaurants)
       })
     })
