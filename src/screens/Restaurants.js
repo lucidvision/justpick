@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
 import { Location, Permissions } from 'expo'
-import { AppModal, Button, Card, Heading, Swiper } from 'components'
+import { AppModal, Button, Card, Heading } from 'components'
 import {
   addPicklist,
   addShortlist,
@@ -38,10 +38,13 @@ class Restaurants extends Component {
     restaurants: PropTypes.array.isRequired,
     shortlist: PropTypes.array.isRequired,
   }
+
   state = {
+    index: 0,
     showModal: false,
     status: null,
   }
+
   componentDidMount() {
     Permissions.getAsync(Permissions.LOCATION)
       .then(({ status }) => {
@@ -58,6 +61,7 @@ class Restaurants extends Component {
         this.setState(() => ({ status: 'undetermined' }))
       })
   }
+
   askPermission = () => {
     Permissions.askAsync(Permissions.LOCATION)
       .then(({ status }) => {
@@ -72,6 +76,7 @@ class Restaurants extends Component {
         this.setState(() => ({ status: 'undetermined' }))
       })
   }
+
   fetchAndSetRestaurants = () => {
     // this.props.dispatch(setRestaurants(dummyRestaurants))
     Location.getCurrentPositionAsync().then(({ coords }) => {
@@ -82,42 +87,51 @@ class Restaurants extends Component {
       })
     })
   }
-  handleSwipeLeft = index => {
+
+  handleLeftSwiped = () => {
     const { restaurants, shortlist } = this.props
-    if (restaurants.length - 1 === index && shortlist.length === 0) {
-      this.setState({ showModal: true })
+    if (restaurants.length - 1 === this.state.index && shortlist.length === 0) {
+      this.setState({
+        index: 0,
+        showModal: true
+      })
     }
+    this.handlePickingCompleted()
   }
-  handleSwipeRight = restaurant => {
+
+  handleRightSwiped = restaurant => {
     this.props.dispatch(addShortlist(restaurant))
+    this.handlePickingCompleted()
   }
-  handlePickingComplete = () => {
-    this.props.dispatch(transferRestaurants())
-    if (this.props.restaurants.length === 1) {
-      const restaurant = this.props.restaurants[0]
-      this.fetchAndSetRestaurants()
-      this.props.dispatch(setPick(restaurant))
-      this.props.dispatch(addPicklist(restaurant))
-      this.props.navigation.navigate('Pick')
+
+  handlePickingCompleted = () => {
+    if (this.state.index === this.props.restaurants.length - 1) {
+      if (this.props.shortlist.length === 1) {
+        const restaurant = this.props.restaurants[0]
+        this.fetchAndSetRestaurants()
+        this.props.dispatch(setPick(restaurant))
+        this.props.dispatch(addPicklist(restaurant))
+        this.props.navigation.navigate('Pick')
+      } else {
+        this.props.dispatch(transferRestaurants())
+      }
+      this.setState({ index: 0 })
+      return
     }
+    this.setState(prevState => ({ index: prevState.index + 1 }))
   }
+
   handlePressButton = () => {
     this.fetchAndSetRestaurants()
     this.setState({ showModal: false })
   }
-  renderCard = restaurant => {
-    return <Card restaurant={restaurant} />
-  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Swiper
-          data={this.props.restaurants}
-          onSwipeLeft={this.handleSwipeLeft}
-          onSwipeRight={this.handleSwipeRight}
-          onPickingComplete={this.handlePickingComplete}
-          renderCard={this.renderCard}
-        />
+        {this.props.restaurants.map(restaurant => {
+          return <Card key={restaurant.name} onLeftSwiped={this.handleLeftSwiped} onRightSwiped={this.handleRightSwiped} restaurant={restaurant} />
+        })}
         <AppModal
           visible={this.state.showModal}
           onRequestClose={this.handlePressButton}
